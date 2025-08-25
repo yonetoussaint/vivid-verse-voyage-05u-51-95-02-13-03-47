@@ -1,73 +1,133 @@
-# Welcome to your Lovable project
+# Auth SDK
 
-## Project info
+A React authentication SDK with OAuth and email/password support.
 
-**URL**: https://lovable.dev/projects/638da187-22fb-450c-b9fd-97180f56db7a
+## Installation
 
-## How can I edit this code?
+```bash
+npm install @your-org/auth-sdk
+```
 
-There are several ways of editing your application.
+## Peer Dependencies
 
-**Use Lovable**
+Make sure you have these installed in your project:
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/638da187-22fb-450c-b9fd-97180f56db7a) and start prompting.
+```bash
+npm install react react-dom react-router-dom
+```
 
-Changes made via Lovable will be committed automatically to this repo.
+## Usage
 
-**Use your preferred IDE**
+### Basic Setup
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+```tsx
+import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
+import { AuthProvider, SignInScreen, useAuth } from '@your-org/auth-sdk';
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+function App() {
+  return (
+    <BrowserRouter>
+      <AuthProvider>
+        <MyApp />
+      </AuthProvider>
+    </BrowserRouter>
+  );
+}
 
-Follow these steps:
+function MyApp() {
+  const { isAuthenticated, user, logout } = useAuth();
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+  if (!isAuthenticated) {
+    return <SignInScreen />;
+  }
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+  return (
+    <div>
+      <h1>Welcome, {user?.email}!</h1>
+      <button onClick={logout}>Logout</button>
+    </div>
+  );
+}
 
-# Step 3: Install the necessary dependencies.
-npm i
+export default App;
+```
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### Available Components
+
+- `SignInScreen` - Main login screen with all authentication flows
+- `EmailAuthScreen` - Email authentication
+- `PasswordAuthScreen` - Password entry
+- `VerificationCodeScreen` - OTP verification
+- `AccountCreationScreen` - Account creation flow
+- `SuccessScreen` - Success confirmation
+- `AuthProvider` - Context provider
+- `MainLoginScreen` - Main login screen with OAuth options
+
+### Available Hooks
+
+- `useAuth()` - Access authentication state and methods
+- `useEmailValidation()` - Email validation utilities
+
+### Backend Configuration
+
+Update the backend URL in your environment:
+
+```tsx
+// The SDK expects your backend to have these endpoints:
+// POST /signin - Email/password login
+// GET /verify-token - Token verification
+// POST /auth/logout - Logout
+// POST /request-password-reset - Password reset
+// POST /verify-otp - OTP verification
+// POST /reset-password - Complete password reset
+```
+
+## API
+
+### AuthProvider Props
+
+The AuthProvider component wraps your app and provides authentication context.
+
+### useAuth Hook
+
+```tsx
+const {
+  user,           // Current user object
+  isAuthenticated, // Boolean auth status
+  isLoading,      // Loading state
+  login,          // Login function
+  logout,         // Logout function
+  checkAuthStatus // Check current auth status
+} = useAuth();
+```
+
+### Features
+
+- ✅ Email/Password Authentication
+- ✅ Multi-step Account Creation
+- ✅ Password Reset with OTP
+- ✅ OAuth Support (Google, etc.)
+- ✅ Email Validation
+- ✅ Domain Suggestions
+- ✅ Responsive Design
+- ✅ TypeScript Support
+- ✅ Customizable UI Components
+
+## Demo
+
+This project includes a demo application showing all authentication flows. Run:
+
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## Building the SDK
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+npm run build:sdk
+```
 
-**Use GitHub Codespaces**
+## License
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/638da187-22fb-450c-b9fd-97180f56db7a) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes it is!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+MIT
